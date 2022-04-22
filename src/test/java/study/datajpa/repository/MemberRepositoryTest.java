@@ -13,6 +13,8 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +30,8 @@ class MemberRepositoryTest {
     MemberRepository memberRepository;
     @Autowired
     TeamRepository teamRepository;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Test
     public void testMember(){
@@ -214,5 +218,30 @@ class MemberRepositoryTest {
 //        assertThat(slice.getNumber()).isEqualTo(0);  // 페이지 번호
 //        assertThat(slice.isFirst()).isTrue();    // 첫 번째 페이지 인지
 //        assertThat(slice.hasNext()).isTrue();    // 다음 페이지가 있는지
+    }
+
+    @Test
+    public void bulkUpdate(){
+        // given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 19));
+        memberRepository.save(new Member("member3", 20));
+        memberRepository.save(new Member("member4", 21));
+        memberRepository.save(new Member("member5", 40));
+
+        // when
+        // 영속성 컨텍스트를 변경한게 아니기 때문에 member5 를 조회 했을 때 age 값이 41 이 기대 값 이지만, 40으로 출력된다. ( 이점 주의 )
+        // 그래서 영속성 컨택스트를 초기화 후 다시 조회하면 41로 출력이 나온다.
+        // 업데이트 후 수정된 내용르 다시 사용할 경우가 생기면 주의해야한다.
+        int resultCount = memberRepository.bulkAgePlus(20);
+
+//        entityManager.clear();
+
+        List<Member> result = memberRepository.findByUsername("member5");
+        Member member5 = result.get(0);
+        System.out.println("member5 = " + member5);
+
+        // then
+        assertThat(resultCount).isEqualTo(3);
     }
 }
