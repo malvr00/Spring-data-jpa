@@ -11,6 +11,7 @@ import study.datajpa.entity.Team;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -145,5 +146,33 @@ class MemberRepositoryTest {
         for (Member member : result) {
             System.out.println("member = " + member);
         }
+    }
+
+    @Test
+    public void returnType(){
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("BBB", 20);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        List<Member> aaa = memberRepository.findListByUsername("AAA");
+        System.out.println("aaa = " + aaa);
+        Member  bbb = memberRepository.findMemberByUsername("AAA");
+        System.out.println("bbb = " + bbb);
+        Optional<Member> ccc = memberRepository.findOptionalByUsername("AAA");
+        System.out.println("ccc.get() = " + ccc.get());
+
+        List<Member> result1 = memberRepository.findListByUsername("asdasdzxc");
+        System.out.println("result1 = " + result1);
+
+        // 단일 검색일 경우 값이 없다면 NoResultException 터짐
+        Member findMember = memberRepository.findMemberByUsername("asdasdzxc");
+        System.out.println("findMember = " + findMember);
+
+        // 데이터가 있을 수 도 있고 없을 수 도 있따면 Optional
+        // 값이 2개 이상이면 NonUniqueResultException 발생
+        Optional<Member> result3 = memberRepository.findOptionalByUsername("asdasdzxc");
+        System.out.println("result3 = " + result3);
+
     }
 }
