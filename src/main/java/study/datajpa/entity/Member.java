@@ -11,6 +11,10 @@ import javax.persistence.*;
 @Data   // 실무에서 Setter 사용 비추 ( 연습이라 Setter 사용 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "username","age"})
+@NamedQuery(
+        name = "Member.findByUsername",
+        query="select m from Member m where m.username = :username"
+)
 public class Member {
 
     @Id @GeneratedValue
