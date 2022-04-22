@@ -3,6 +3,7 @@ package study.datajpa.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 
 import java.util.List;
@@ -19,4 +20,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 동적 쿼리는 QueryDsl 사용 하는게 좋음. ( 권장 )
     @Query("select m from Member m where m.username = :username and m.age = :age")  // NameQuery 보다 사용성이 편리함. NameQuery 처럼 컴파일 단계에서 오류를 잡아줌
     List<Member> findUser(@Param("username") String username, @Param("age") int age);
+
+    @Query("select m.username from Member m")
+    List<String> findUsernameList();
+
+    // Query Dto 조회
+    @Query("select new study.datajpa.dto.MemberDto(m.id, m.username, t.name) from Member m join m.team t")
+    List<MemberDto> findMemberDto();
 }
