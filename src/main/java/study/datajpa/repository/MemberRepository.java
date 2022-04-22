@@ -16,4 +16,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query(name = "Member.findByUsername")  // 생략 가능
     List<Member> findByUsername2(@Param("username") String username);
 
+    // 동적 쿼리는 QueryDsl 사용 하는게 좋음. ( 권장 )
+    @Query("select m from Member m where m.username = :username and m.age = :age")  // NameQuery 보다 사용성이 편리함. NameQuery 처럼 컴파일 단계에서 오류를 잡아줌
+    List<Member> findUser(@Param("username") String username, @Param("age") int age);
 }
