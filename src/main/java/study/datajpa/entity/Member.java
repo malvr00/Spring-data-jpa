@@ -15,6 +15,10 @@ import javax.persistence.*;
         name = "Member.findByUsername2",
         query="select m from Member m where m.username = :username"
 )
+@NamedEntityGraph(  // JPA 표준 스팩의 EntityGraph
+        name = "Member.all",
+        attributeNodes = @NamedAttributeNode("team")
+)
 public class Member {
 
     @Id @GeneratedValue
