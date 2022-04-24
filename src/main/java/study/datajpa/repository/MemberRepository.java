@@ -78,4 +78,17 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     // Lock
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<Member> findLockByUsername(String username);
+
+    // 한계 : 데이터를 엔티티에 맞게 셀렉트를 다 적어주야함. 반환 타입이 몇 가지 지원 안함.
+    // Sort 파라미터를 통해 저열ㄹ이 정상 동작하지 않을 수 있음 ( 믿지 말고 직접 처리 )
+    // 동적 쿼리 불가능
+    // 제약이 많기 때문에 JDBC 나 Mybatis 쓰는게 좋음
+    @Query(value = "select * from member where username = ?", nativeQuery = true)
+    Member findByNativeQuery(String username);
+
+    @Query(value = "select  m.member_id as id, m.username, t.name as teamName " +
+            "from member m left join team t",
+            countQuery = "select count(*) from member",
+            nativeQuery = true)
+    Page<MemberProjection> findByNativeProjection(Pageable pageable);
 }
